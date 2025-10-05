@@ -1,38 +1,57 @@
 /**
  * Asistente de Programación: script.js para Invitación Digital
- * Implementación de la Cuenta Regresiva para la fiesta de María Clara.
+ * Implementación de la Cuenta Regresiva y Reproducción de Música.
  */
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    // 1. Definimos la fecha y hora del evento: 18 DE OCTUBRE DEL 2025 A LAS 21:30HS
-    // ¡IMPORTANTE! Si se cambia la fecha, solo se necesita cambiar esta línea.
+    // =================================================================
+    // 1. FUNCIONALIDAD DE REPRODUCCIÓN DE MÚSICA
+    // =================================================================
+    const musica = document.getElementById('musicaFondo');
+    const btnMusica = document.getElementById('btnPlayMusic');
+
+    btnMusica.addEventListener('click', () => {
+        if (musica.paused) {
+            // Intentar reproducir. Esto es crucial en móviles.
+            musica.play()
+                .then(() => {
+                    btnMusica.innerHTML = '⏸️ Pausar Música';
+                })
+                .catch(error => {
+                    // Si el navegador lo bloquea, mostramos un error amigable.
+                    console.error('Error al intentar reproducir el audio:', error);
+                    btnMusica.innerHTML = '⚠️ Inicia la Música (Error)';
+                });
+        } else {
+            musica.pause();
+            btnMusica.innerHTML = '▶️ Reproducir Música';
+        }
+    });
+
+    // =================================================================
+    // 2. FUNCIONALIDAD DE CUENTA REGRESIVA
+    // =================================================================
+    // Fecha y hora del evento: 18 DE OCTUBRE DEL 2025 A LAS 21:30HS
     const fechaEvento = new Date("October 18, 2025 21:30:00").getTime();
-    
-    // Obtenemos la referencia al elemento HTML donde se mostrará la cuenta regresiva
     const countdownElement = document.getElementById('countdown');
 
-    // 2. Función principal que actualiza el contador
     function actualizarCuentaRegresiva() {
-        // Obtenemos la hora actual
         const ahora = new Date().getTime();
-        
-        // Calculamos la distancia de tiempo restante
         const distancia = fechaEvento - ahora;
 
-        // Si la cuenta regresiva termina (distancia es negativa)
         if (distancia < 0) {
-            clearInterval(x); // Detenemos el intervalo
+            clearInterval(x);
             countdownElement.innerHTML = `<p class="time-block" style="font-size: 1.5em; width: 100%;">¡Es Hoy! ¡A celebrar! 🎉</p>`;
             return; 
         }
 
-        // 3. Cálculos de tiempo (fórmulas matemáticas)
+        // Cálculos de tiempo
         const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
         const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
         const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
 
-        // 4. Inyección del HTML para mostrar el resultado
+        // Inyección del HTML para mostrar el resultado
         countdownElement.innerHTML = `
             <div class="time-block">${dias}<span>DÍAS</span></div>
             <div class="time-block">${horas}<span>HS</span></div>
@@ -41,7 +60,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         `;
     }
 
-    // 5. Llamamos a la función inmediatamente y luego cada segundo
+    // Inicializamos y configuramos el intervalo
     actualizarCuentaRegresiva();
     const x = setInterval(actualizarCuentaRegresiva, 1000);
 });
